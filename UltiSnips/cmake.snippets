@@ -7,8 +7,9 @@ SET (extra_libs, ${2:\$\{extra_libs\}})
 endsnippet
 
 snippet exe "ADD_EXECUTABLE (...)" 
-ADD_EXECUTABLE (${1/([a-zA-Z0-9_]+).*/$1/} ${1:files})
-TARGET_LINK_LIBRARIES (${1/([a-zA-Z0-9_]+).*/$1/} ${2:\$\{extra_libs\}})
+SET (${1:target_name}_src \$\{${1/([a-zA-Z0-9_]+).*/$1/}_src\} ${2:files})
+ADD_EXECUTABLE (${1/([a-zA-Z0-9_]+).*/$1/} \$\{${1/([a-zA-Z0-9_]+).*/$1/}_src\})
+TARGET_LINK_LIBRARIES (${1/([a-zA-Z0-9_]+).*/$1/} ${3:\$\{extra_libs\}})
 ADD_TEST (${1/([a-zA-Z0-9_]+).*/$1/}_Runs ${1/([a-zA-Z0-9_]+).*/$1/})
 endsnippet
 
@@ -31,3 +32,5 @@ endsnippet
 snippet set "SET (var value)" 
 SET (${1:var} ${2:value})
 endsnippet
+
+# TODO more action like install, etc...
