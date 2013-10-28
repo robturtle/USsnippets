@@ -1,0 +1,33 @@
+snippet head "CMake Head" 
+CMAKE_MINIMUM_REQUIRED (VERSION ${3:2.8})
+PROJECT (${1:project})
+
+ENABLE_TESTING()
+SET (extra_libs, ${2:\$\{extra_libs\}})
+endsnippet
+
+snippet exe "ADD_EXECUTABLE (...)" 
+ADD_EXECUTABLE (${1/([a-zA-Z0-9_]+).*/$1/} ${1:files})
+TARGET_LINK_LIBRARIES (${1/([a-zA-Z0-9_]+).*/$1/} ${2:\$\{extra_libs\}})
+ADD_TEST (${1/([a-zA-Z0-9_]+).*/$1/}_Runs ${1/([a-zA-Z0-9_]+).*/$1/})
+endsnippet
+
+snippet opt "OPTION (NAME description ON/OFF)"
+OPTION (${1:NAME} "${2:description}" ${3:ON})
+endsnippet
+
+snippet incdir "INCLUDE_DIRECTORIES (path)" 
+INCLUDE_DIRECTORIES ("${1:path}")
+endsnippet
+
+snippet -i "INCLUDE (...)" 
+INCLUDE (${1:path})
+endsnippet
+
+snippet -l "LINK_DIRECTORIES (libs)" 
+LINK_DIRECTORIES (${1:libs})
+endsnippet
+
+snippet set "SET (var value)" 
+SET (${1:var} ${2:value})
+endsnippet

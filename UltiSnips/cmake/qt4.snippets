@@ -1,0 +1,6 @@
+snippet -lqt "FIND_PACKAGE (Qt4 REQUIRED)" 
+FIND_PACKAGE (Qt4 REQUIRED)
+INCLUDE (\$\{QT_USE_FILE\})
+ADD_DEFINITIONS (\$\{QT_DEFINITIONS\})
+SET (extra_libs \$\{extra_libs\} \$\{QT_LIBRARIES\})
+endsnippet
