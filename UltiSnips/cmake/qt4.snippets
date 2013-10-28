@@ -1,13 +1,14 @@
-snippet -lqt "FIND_PACKAGE (Qt4 REQUIRED)" 
+snippet -lqt "FIND_PACKAGE (Qt4 REQUIRED)" !b
 FIND_PACKAGE (Qt4 REQUIRED)
 INCLUDE (\$\{QT_USE_FILE\})
 ADD_DEFINITIONS (\$\{QT_DEFINITIONS\})
 SET (extra_libs \$\{extra_libs\} \$\{QT_LIBRARIES\})
+
 endsnippet
 
 # TODO more Qt action like moc, etc...
-snippet moc "QT4_WRAP_CPP (headers_moc ${header}" 
-SET (${1/([a-zA-Z0-9_]+).*/$1/}_need_moc ${1:headers.h})
+snippet moc "QT4_WRAP_CPP (headers_moc ${header}" !b
+SET (${1:name}_need_moc ${2:headers.h})
 QT4_WRAP_CPP (${1/([a-zA-Z0-9_]+).*/$1/}_moc \$\{${1/([a-zA-Z0-9_]+).*/$1/}_need_moc\})
 SET (${1/([a-zA-Z0-9_]+).*/$1/}_src \$\{${1/([a-zA-Z0-9_]+).*/$1/}_src\} \$\{${1/([a-zA-Z0-9_]+).*/$1/}_moc\})
 endsnippet
