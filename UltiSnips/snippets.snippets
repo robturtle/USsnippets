@@ -1,3 +1,15 @@
 snippet v "\$\{...\} in snippet" !w
 \\\$\\\{${1}\\\}
 endsnippet
+
+snippet py "`!p ...`" !w
+\`!p ${1}\`
+endsnippet
+
+snippet vim "`!v ...`" !w
+\`!v ${1}\`
+endsnippet
+
+snippet "g(\d)" "`!p snip.rv = match.group(?)`" !wr
+\`!p snip.rv = match.group(`!p snip.rv = match.group(1)`)\`
+endsnippet
