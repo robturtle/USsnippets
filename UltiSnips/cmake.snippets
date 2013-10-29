@@ -4,7 +4,7 @@ PROJECT (${1:project})
 
 ENABLE_TESTING()
 SET (extra_libs, ${2:\$\{extra_libs\}})
-
+$0
 endsnippet
 
 
@@ -12,21 +12,21 @@ endsnippet
 #   Because i'll use vim completion (c-x,c-f) 
 #   to complete files, so regex trigger is better
 snippet "exe\s+([\w]+)(\.\w+)" "ADD_EXECUTABLE for single file" rb
-ADD_EXECUTABLE (`!p snip.rv = match.group(1)` `!p snip.rv = match.group(1) + match.group(2)`)
-TARGET_LINK_LIBRARIES (`!p snip.rv = match.group(1)` ${1:\$\{extra_libs\}})
-ADD_TEST (`!p snip.rv = match.group(1)`_Runs `!p snip.rv = match.group(1)`)
-
+ADD_EXECUTABLE (${1:`!p snip.rv = match.group(1)`} ${2:`!p snip.rv = match.group(1) + match.group(2)`})
+TARGET_LINK_LIBRARIES ($1 ${3:\$\{extra_libs\}})
+ADD_TEST ($1_Runs $1)
+$0
 endsnippet
 
 # exe proj_hello hello.c main.c aux.c => cmake add compile target proj_hello
 #   Because i'll use vim completion (c-x,c-f) 
 #   to complete files, so regex trigger is better
 snippet "exe\s+([\w.]+)\s+(\w[\w\s.]+)" "ADD_EXECUTABLE (NAME FILES)" rb
-SET (`!p snip.rv = match.group(1)`_src \$\{`!p snip.rv = match.group(1)`_src\} `!p snip.rv = match.group(2)`)
-ADD_EXECUTABLE (`!p snip.rv = match.group(1)` \$\{`!p snip.rv = match.group(1)`_src\})
-TARGET_LINK_LIBRARIES (`!p snip.rv = match.group(1)` ${1:\$\{extra_libs\}})
-ADD_TEST (`!p snip.rv = match.group(1)`_Runs `!p snip.rv = match.group(1)`)
-
+SET (${1:`!p snip.rv = match.group(1)`}_src \$\{$1_src\} ${2:`!p snip.rv = match.group(2)`})
+ADD_EXECUTABLE ($1 \$\{$1_src\})
+TARGET_LINK_LIBRARIES ($1 ${3:\$\{extra_libs\}})
+ADD_TEST ($1_Runs $1)
+$0
 endsnippet
 
 
