@@ -11,12 +11,12 @@ def ls_files(match, delim=' ', lister=os.listdir):
 endglobal
 
 # ls [path]
-snippet "ls(\s+(\S.*)?)?" "List files, delim=' '" r
+snippet "ls(\s+(\S.*)?)?" "List files, delim=' '" rb
 `!p snip.rv = ls_files(match)`
 endsnippet
 
 # ll [path]
-snippet "ll(\s+(\S.*)?)?" "List files" r
+snippet "ll(\s+(\S.*)?)?" "List files" rb
 `!p snip.rv = ls_files(match, '\n')`
 endsnippet
 
@@ -40,22 +40,22 @@ SRC_LISTER = get_suffix_lister(['cpp', 'c', 'cxx'])
 HDR_LISTER = get_suffix_lister(['h', 'hpp'])
 endglobal
 
-# src [path]
-snippet "src(\s+(\S.*)?)?" "List source files" r
+# listsrc [path]
+snippet "listsrc(\s+(\S.*)?)?" "List source files -l" r
 `!p snip.rv = ls_files(match, lister=SRC_LISTER)`
 endsnippet
 
-# srcl [path]
-snippet "srcl(\s+(\S.*)?)?" "List source files -l" r
+# listsrcl [path]
+snippet "listsrcl(\s+(\S.*)?)?" "List source files -l" r
 `!p snip.rv = ls_files(match, delim='\n', lister=SRC_LISTER)`
 endsnippet
 
-# hdr [path]
-snippet "hdr(\s+(\S.*)?)?" "List header files" r
+# listhdr [path]
+snippet "listhdr(\s+(\S.*)?)?" "List header files" r
 `!p snip.rv = ls_files(match, lister=HDR_LISTER)`
 endsnippet
 
-# hdrl [path]
-snippet "hdrl(\s+(\S.*)?)?" "List header files -l" r
+# listhdrl [path]
+snippet "listhdrl(\s+(\S.*)?)?" "List header files -l" r
 `!p snip.rv = ls_files(match, delim='\n', lister=HDR_LISTER)`
 endsnippet
