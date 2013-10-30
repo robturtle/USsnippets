@@ -1,0 +1,6 @@
+# tranfer from https URL to git URL
+# Input : https://github.com/robturtle/linux_config
+# Output: git@github.com:robturtle/linux_config
+snippet git "git https URL to git URL" b
+git@${VISUAL/https?:\/\/([\w.]+)\/(.*)/$1:$2/}
+endsnippet
