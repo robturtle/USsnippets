@@ -24,7 +24,7 @@ endsnippet
 # List c/c++ source/header files
 global !p
 import glob
-def get_suffix_lister(suffixes):
+def get_suffix_lister(suffixes, fullpath=True):
     def get_suffix_list(path='.'):
         flist = []
         for suffix in suffixes:
@@ -33,11 +33,17 @@ def get_suffix_lister(suffixes):
             else:
                 pat = os.path.join(path, '*.'+suffix)
             flist += glob.glob(pat)
+        if not fullpath:
+            flist = [os.path.basename(f) for f in flist]
         return flist
     return get_suffix_list
 
-SRC_LISTER = get_suffix_lister(['cpp', 'c', 'cxx'])
-HDR_LISTER = get_suffix_lister(['h', 'hpp'])
+SRC_SUFFIXES = ['cpp', 'c', 'cxx']
+HDR_SUFFIXES = ['h', 'hpp']
+SRC_LISTER = get_suffix_lister(SRC_SUFFIXES, fullpath=False)
+HDR_LISTER = get_suffix_lister(HDR_SUFFIXES, fullpath=False)
+SRC_PATH_LISTER = get_suffix_lister(SRC_SUFFIXES)
+HDR_PATH_LISTER = get_suffix_lister(HDR_SUFFIXES)
 endglobal
 
 # listsrc [path]
@@ -50,6 +56,11 @@ snippet "listsrcl(\s+(\S.*)?)?" "List source files -l" r
 `!p snip.rv = ls_files(match, delim='\n', lister=SRC_LISTER)`
 endsnippet
 
+# listsrcf [path]
+snippet "listsrcf(\s+(\S.*)?)?" "List source files -l in fullpath" r
+`!p snip.rv = ls_files(match, delim='\n', lister=SRC_PATH_LISTER)`
+endsnippet
+
 # listhdr [path]
 snippet "listhdr(\s+(\S.*)?)?" "List header files" r
 `!p snip.rv = ls_files(match, lister=HDR_LISTER)`
@@ -58,4 +69,9 @@ endsnippet
 # listhdrl [path]
 snippet "listhdrl(\s+(\S.*)?)?" "List header files -l" r
 `!p snip.rv = ls_files(match, delim='\n', lister=HDR_LISTER)`
+endsnippet
+
+# listhdrf [path]
+snippet "listhdrf(\s+(\S.*)?)?" "List header files -l" r
+`!p snip.rv = ls_files(match, delim='\n', lister=HDR_PATH_LISTER)`
 endsnippet
