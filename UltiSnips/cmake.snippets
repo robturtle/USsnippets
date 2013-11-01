@@ -1,12 +1,14 @@
 snippet head "CMake Head" !b
 CMAKE_MINIMUM_REQUIRED (VERSION ${3:2.8})
-PROJECT (${1:project})
-
+CMAKE_POLICY (VERSION $3)
 ENABLE_TESTING()
-SET (extra_libs, ${2:\$\{extra_libs\}})
+PROJECT (${1:project})
 $0
 endsnippet
 
+################################################################################
+# Targets
+################################################################################
 
 # exe hello.c => cmake add compile target hello
 #   Because i'll use vim completion (c-x,c-f) 
@@ -18,10 +20,10 @@ ADD_TEST ($1_Runs $1)
 $0
 endsnippet
 
-# exe proj_hello hello.c main.c aux.c => cmake add compile target proj_hello
+# exe proj_name hello.c main.c aux.c => cmake add compile target proj_name
 #   Because i'll use vim completion (c-x,c-f) 
 #   to complete files, so regex trigger is better
-snippet "exe\s+([\w.]+)\s+(\w[\w\s.]+)" "ADD_EXECUTABLE (NAME FILES)" rb
+snippet "exe\s+(\w+)\s+(\w[\w\s.]+)" "ADD_EXECUTABLE (NAME FILES)" rb
 SET (${1:`!p snip.rv = match.group(1)`}_src \$\{$1_src\} ${2:`!p snip.rv = match.group(2)`})
 ADD_EXECUTABLE ($1 \$\{$1_src\})
 TARGET_LINK_LIBRARIES ($1 ${3:\$\{extra_libs\}})
@@ -29,25 +31,240 @@ ADD_TEST ($1_Runs $1)
 $0
 endsnippet
 
-
-snippet opt "OPTION (NAME description ON/OFF)" !b
-OPTION (${1:NAME} "${2:description}" ${3:ON})
+snippet "lib\s+(\w+)\s+([\w\s.]+)" "ADD_LIBRARY(NAME SRC)" rb
+SET (${1:`!p snip.rv = match.group(1)`}_src \$\{$1_src\} ${2:`!p snip.rv = match.group(2)`})
+ADD_LIBRARY ($1 ${3:STATIC | SHARED | MODULE}
+    ${4:EXCLUDE_FROM_ALL}${4/.+/\n    /}\$\{$1_src\}
+)
+SET_TARGET_PROPERTIES ($1 PROPERTIES VERSION 0.1)
+$0
 endsnippet
+################################################################################
+# End of Targets
+################################################################################
 
-snippet incdir "INCLUDE_DIRECTORIES (path)" !b
-INCLUDE_DIRECTORIES ("${1:path}")
-endsnippet
 
-snippet -i "INCLUDE (...)" !b
-INCLUDE (${1:path})
+################################################################################
+# PATH
+################################################################################
+snippet -i "INCLUDE_DIRECTORIES (path)" !b
+INCLUDE_DIRECTORIES (${1:PATH_TO_HEADERS})
 endsnippet
 
 snippet -l "LINK_DIRECTORIES (libs)" !b
 LINK_DIRECTORIES (${1:libs})
 endsnippet
 
+snippet subdir "ADD_SUBDIRECTORY (sub_dir)" !b
+ADD_SUBDIRECTORY (${1:sub_dir}${2/.+/ /}${2:EXCLUDE_FROM_ALL})
+endsnippet
+
+snippet import "INCLUDE (CMAKE_MODULE)" !b
+INCLUDE (${1:CMAKE_FILE})
+endsnippet
+
+snippet findpath "FIND_PATH" !b
+FIND_PATH (${1:var_to_store}
+    NAMES ${2:fname1 fname2 ...}
+    PATHS ${3:/usr/local/include /usr/include}
+)
+$0
+endsnippet
+
+snippet findlib "FIND_LIBRARY (...)" !b
+FIND_LIBRARY (${1:var_to_store}
+    NAMES ${2:name1 name2 ...}
+    PATHS ${3:/usr/lib /usr/local/lib}
+)
+IF ($1)
+    SET (extra_libs ${extra_libs} $1)
+$0
+endsnippet
+################################################################################
+# End of PATH
+################################################################################
+
+
+################################################################################
+# SETTINGS
+################################################################################
+snippet define "" !b
+ADD_DEFINITIONS (${1:-DFLAG1 -DFLAG2 ...})
+endsnippet
+
 snippet set "SET (var value)" !b
 SET (${1:var} ${2:value})
 endsnippet
 
-# TODO more action like install, etc...
+snippet append "SET (var ${var} value)" !b
+SET (${1:var} \$\{$1\} ${2:value})
+endsnippet
+
+snippet opt "OPTION (NAME description ON/OFF)" !b
+OPTION (${1:NAME} "${2:description}" ${3:ON})
+endsnippet
+
+snippet hideopt "OPTION (...) as advanced" !b
+MARK_AS_ADVANCED (${1:CLEAR | FORCE}${1/.+/ /}${2:var1 var2 ...})
+endsnippet
+
+# Output
+snippet msg "MESSAGE (...)" !b
+MESSAGE ("${1:message}")
+endsnippet
+################################################################################
+# End of SETTINGS
+################################################################################
+
+
+########################################################################
+# Flow control
+########################################################################
+snippet ifop "possible operators in IF statement" w
+${1:NOT | AND | OR | COMMAND | DEFINED | EXISTS | IS_DIRECTORY | IS_ABSOLUTE | IS_NEWER_THEN | MATCHES}
+endsnippet
+
+snippet == "EQUAL" !w
+${1:STR}EQUAL $0
+endsnippet
+
+snippet < "LESS" !w
+${1:STR}LESS $0
+endsnippet
+
+snippet > "GREATER" !w
+${1:STR}GREATER $0
+endsnippet
+
+snippet ==ver "VERSION_EQUAL major[.minor[.patch[.tweak]]]" !w
+VERSION_EQUAL $0
+endsnippet
+
+snippet <ver "VERSION_LESS major[.minor[.patch[.tweak]]]" !w
+VERSION_LESS $0
+endsnippet
+
+snippet >ver "VERSION_GREATER major[.minor[.patch[.tweak]]]" !w
+VERSION_GREATER $0
+endsnippet
+
+snippet if "if (NOT AND OR COMMAND DEFINED EXISTS IS_DIRECTORY IS_ABSOLUTE IS_NEWER_THEN MATCHES)" !b
+IF (${1:NOT AND OR COMMAND DEFINED EXISTS IS_DIRECTORY IS_ABSOLUTE IS_NEWER_THEN MATCHES})
+    ${2:STATEMENT}
+ENDIF($1)
+endsnippet
+
+snippet else "else (...)" !b
+ELSE ()
+    ${1:STATEMENT}
+endsnippet
+
+snippet elif "elseif (...)" !b
+ELSEIF (${1:NOT AND OR COMMAND DEFINED EXISTS IS_DIRECTORY IS_ABSOLUTE IS_NEWER_THEN MATCHES})
+    ${2:STATEMENT}
+endsnippet
+
+snippet ifel "if (...) else ... endif()" !b
+IF (${1:NOT AND OR COMMAND DEFINED EXISTS IS_DIRECTORY IS_ABSOLUTE IS_NEWER_THEN MATCHES})
+    ${2:STATEMENT}
+ELSE ()
+    ${4:STATEMENT}
+ENDIF ($1)
+endsnippet
+
+snippet foreach "FOREACH (ITER LIST) ..." !b
+FOREACH (${1:iter} ${2:\$\{${3:list}\}})
+    ${4:STATEMENT}
+ENDFOREACH($1)
+endsnippet
+
+snippet while "WHILE (NOT AND OR COMMAND DEFINED EXISTS IS_DIRECTORY IS_ABSOLUTE IS_NEWER_THEN MATCHES)" !b
+WHILE (${1:NOT AND OR COMMAND DEFINED EXISTS IS_DIRECTORY IS_ABSOLUTE IS_NEWER_THEN MATCHES})
+    ${2:STATEMENT}
+ENDWHILE ($1)
+endsnippet
+
+snippet func "FUNCTION (FUNCNAME ARGS)" !b
+FUNCTION (${1:funcname arg1 arg2 ...})
+    $2
+ENDFUNCTION ()
+$0
+endsnippet
+
+snippet macro "MACRO (MNAME ARGS)" !b
+MACRO (${1:macroname arg1 arg2 ...})
+    $2
+ENDMACRO ()
+$0
+endsnippet
+
+snippet break "BREAK" !w
+BREAK
+endsnippet
+
+snippet return "RETURN val" !w
+RETURN $0
+endsnippet
+########################################################################
+# End of Flow control
+########################################################################
+
+########################################################################
+# Installation
+########################################################################
+snippet installbin "INSTALL (bins and libs)" !b
+INSTALL (TARGETS ${1:bin1 lib2 ...}
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+)
+$0
+endsnippet
+
+snippet installfile "INSTALL (files)" !b
+INSTALL (FILES ${1:file1 file2 ...}
+    ${2:where?}
+)
+$0
+endsnippet
+
+snippet installsh "INSTALL (PROGRAMS...)" !b
+INSTALL (PROGRAMS ${1:sh1 sh2 ...}
+    DESTINATION bin
+)
+$0
+endsnippet
+
+snippet installdir "INSTALL (DESTINATION ...)" !b
+INSTALL (DIRECTORY ${1:dir1 dir2 ...}
+    DESTINATION ${2:where?}
+)
+$0
+endsnippet
+
+snippet package "Create a installer/package" !b
+include (CPack)
+endsnippet
+########################################################################
+# End of Installation
+########################################################################
+
+
+################################################################################
+# Verbose command prompt
+# Who wanna read the f*cking document?!
+################################################################################
+snippet project "PROJECT (name [CXX | C | Java | NONE])" !b
+PROJECT (${1:name}${2/.+/ /}${2:CXX | C | Java | NONE})
+endsnippet
+
+# List relative
+snippet remove "list.remove" !b
+REMOVE(${1:LIST})
+endsnippet
+
+snippet split "list.split(' ')" !b
+SEPARATE_ARGUMENTS (${1:LIST})
+endsnippet
+################################################################################
+# End of Verbose command prompt
+################################################################################

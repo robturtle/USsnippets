@@ -1,0 +1,11 @@
+snippet lswig "FIND_PACKAGE (SWIG)" !b
+FIND_PACKAGE (SWIG REQUIRED)
+INCLUDE (\$\{SWIG_USE_FILE\})
+$0
+endsnippet
+
+snippet swigflag "SET (CMAKE_SWIG_FLAG ...)" !b
+SET (CMAKE_SWIG_FLAG ${1:flags})
+endsnippet
+
+# TODO SWIG_ADD_MODULE SWIG_LINK_LIBRARY

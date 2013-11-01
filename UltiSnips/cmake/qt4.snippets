@@ -1,4 +1,8 @@
-snippet -lqt "FIND_PACKAGE (Qt4 REQUIRED)" !b
+# In this snippets, if you want to create a Qt executable
+# You can get all the srouces from ${PROJECT_NAME_src}
+# Where the PROJECT_NAME is named by you
+# and object files from ${extra_libs}
+snippet lqt "FIND_PACKAGE (Qt4 REQUIRED)" !b
 FIND_PACKAGE (Qt4 REQUIRED)
 INCLUDE (\$\{QT_USE_FILE\})
 ADD_DEFINITIONS (\$\{QT_DEFINITIONS\})
@@ -10,14 +14,18 @@ endsnippet
 snippet "moc\s+((\w+)\.\w+[\w\s.]*)" "QT4_WRAP_CPP (HEADERS)" rb
 QT4_WRAP_CPP (`!p snip.rv = match.group(2)`_moc `!p snip.rv = match.group(1)`)
 SET (`!p snip.rv = match.group(2)`_src \$\{`!p snip.rv = match.group(2)`_src\} `!p snip.rv = match.group(2)`_moc)
-
+$0
 endsnippet
 
 # moc name hello.h main.h ==> moced files will be added into 'name_src'
 snippet "moc\s+(\w+)\s+([\w\s.]+)" "QT4_WRAP_CPP (NAME HEADERS ...)" rb
 QT4_WRAP_CPP (`!p snip.rv = match.group(1)`_moc `!p snip.rv = match.group(2)`)
 SET (`!p snip.rv = match.group(1)`_src \$\{`!p snip.rv = match.group(1)`_src\} `!p snip.rv = match.group(1)`_moc)
-
+$0
 endsnippet
 
-# TODO more Qt action like moc, etc...
+snippet "ui\s+(\w+)\s+([\w\s.]+)" "QT4_WRAP_UI (NAME UIS ...)" rb
+QT4_WRAP_UI (`!p snip.rv = match.group(1)`_ui `!p snip.rv = match.group(2)`)
+SET (`!p snip.rv = match.group(1)`_src ${`!p snip.rv = match.group(1)`_src} `!p snip.rv = match.group(1)`_ui)
+$0
+endsnippet
