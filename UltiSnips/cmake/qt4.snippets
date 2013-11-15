@@ -13,19 +13,43 @@ endsnippet
 # moc hello.h main.h ==> moced files will be added into 'hello_src'
 snippet "moc\s+((\w+)\.\w+[\w\s.]*)" "QT4_WRAP_CPP (HEADERS)" rb
 QT4_WRAP_CPP (`!p snip.rv = match.group(2)`_moc `!p snip.rv = match.group(1)`)
-SET (`!p snip.rv = match.group(2)`_src \$\{`!p snip.rv = match.group(2)`_src\} `!p snip.rv = match.group(2)`_moc)
+SET (`!p snip.rv = match.group(2)`_src \$\{`!p snip.rv = match.group(2)`_src\} \$\{`!p snip.rv = match.group(2)`_moc\})
 $0
 endsnippet
 
 # moc name hello.h main.h ==> moced files will be added into 'name_src'
 snippet "moc\s+(\w+)\s+([\w\s.]+)" "QT4_WRAP_CPP (NAME HEADERS ...)" rb
 QT4_WRAP_CPP (`!p snip.rv = match.group(1)`_moc `!p snip.rv = match.group(2)`)
-SET (`!p snip.rv = match.group(1)`_src \$\{`!p snip.rv = match.group(1)`_src\} `!p snip.rv = match.group(1)`_moc)
+SET (`!p snip.rv = match.group(1)`_src \$\{`!p snip.rv = match.group(1)`_src\} \$\{`!p snip.rv = match.group(1)`_moc\})
 $0
 endsnippet
 
 snippet "ui\s+(\w+)\s+([\w\s.]+)" "QT4_WRAP_UI (NAME UIS ...)" rb
 QT4_WRAP_UI (`!p snip.rv = match.group(1)`_ui `!p snip.rv = match.group(2)`)
-SET (`!p snip.rv = match.group(1)`_src ${`!p snip.rv = match.group(1)`_src} `!p snip.rv = match.group(1)`_ui)
+INCLUDE_DIRECTORIES (\$\{PROJECT_BINARY_DIR\}${1:/subdir_to_ui_files})
 $0
+endsnippet
+
+# QTest macro
+snippet qtestmacro "Macro definition of qt_test" !b
+INCLUDE_DIRECTORIES (${PROJECT_SOURCE_DIR})
+MACRO(qt_test testName src)
+    SET (\$\{testName\}_src \$\{\$\{testName\}_src\} \$\{src\})
+    #qt4_automoc(\$\{\$\{testName\}_src\})
+    ADD_EXECUTABLE (\$\{testName\} \$\{\$\{testName\}_src\})
+    TARGET_LINK_LIBRARIES (\$\{testName\}
+            \$\{QT_QTCORE_LIBRARY\}
+            \$\{QT_QTTEST_LIBRARY\} \$\{QT_QTGUI_LIBRARY\}
+            \$\{GSOAP_LIBRARIES\} \$\{QT_QTLOCATION_LIBRARY\}
+            \$\{custom_libs\}
+            )
+    ADD_TEST (\$\{testName\} \$\{testName\})
+ENDMACRO(qt_test testName src)
+$0
+endsnippet
+
+# QTest
+snippet qtest "Add a QTest" !b
+moc ${1:test_Name headers_need_moc}
+qt_test (${2:testName} ${3:source files})
 endsnippet
