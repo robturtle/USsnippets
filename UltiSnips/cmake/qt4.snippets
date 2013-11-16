@@ -26,8 +26,14 @@ endsnippet
 
 snippet "ui\s+(\w+)\s+([\w\s.]+)" "QT4_WRAP_UI (NAME UIS ...)" rb
 QT4_WRAP_UI (`!p snip.rv = match.group(1)`_ui `!p snip.rv = match.group(2)`)
+ADD_CUSTOM_TARGET (`!p snip.rv = match.group(1)`_ui ALL DEPENDS \$\{`!p snip.rv = match.group(1)`_ui\})
+SET (uis \$\{uis\} `!p snip.rv = match.group(1)`_ui PARENT_SCOPE)
 INCLUDE_DIRECTORIES (\$\{PROJECT_BINARY_DIR\}${1:/subdir_to_ui_files})
 $0
+endsnippet
+
+snippet makeui "Only build ui_*.h (For YouCompleteMe completion)" !b
+ADD_CUSTOM_TARGET(uis DEPENDS \$\{uis\})
 endsnippet
 
 # QTest macro
