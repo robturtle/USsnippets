@@ -1,0 +1,66 @@
+snippet ctest "CTest script for nightly/CI tests" !b
+MACRO (TIME RESULT) 
+    IF (WIN32) 
+        # FIXME change the date to time, i dont know about windows
+        EXECUTE_PROCESS(COMMAND "cmd" " /C date /T" OUTPUT_VARIABLE ${RESULT}) 
+        string(REGEX REPLACE "(..)/(..)/..(..).*" "\\1/\\2/\\3" ${RESULT} ${${RESULT}}) 
+    ELSEIF(UNIX) 
+        EXECUTE_PROCESS(COMMAND "date" "+%H%M" OUTPUT_VARIABLE ${RESULT}) 
+        string(REGEX REPLACE "(..)/(..)/..(..).*" "\\1/\\2/\\3" ${RESULT} ${${RESULT}}) 
+    ELSE (WIN32) 
+        MESSAGE(SEND_ERROR "date not implemented") 
+        SET(\$\{RESULT\} 000000) 
+    ENDIF (WIN32) 
+ENDMACRO (TIME)
+TIME(now)
+
+set(CTEST_SOURCE_DIRECTORY "${1:/home/jeremy/Tests/src${2:what}}")
+set(CTEST_BINARY_DIRECTORY "${3:/home/jeremy/Tests/bin$2}")
+
+set(CTEST_SITE "${4:Gentoo-A550}")
+set(CTEST_BUILD_NAME "${5:Linux-g++}${6:-\$\{now\}}")
+
+set(CTEST_CMAKE_GENERATOR "${6:Unix Makefiles}")
+set(CTEST_BUILD_CONFIGURATION "Profiling")
+#set(CTEST_BUILD_OPTIONS "-DWITH_SSH1=ON -WITH_SFTP=ON -DWITH_SERVER=ON -DWITH_ZLIB=ON -DWITH_PCAP=ON -DWITH_GCRYPT=OFF")
+
+set(WITH_MEMCHECK TRUE)
+set(WITH_COVERAGE TRUE)
+
+#######################################################################
+
+ctest_empty_binary_directory(\$\{CTEST_BINARY_DIRECTORY\})
+
+find_program(CTEST_GIT_COMMAND NAMES git)
+find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
+find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
+
+set(CTEST_MEMORYCHECK_SUPPRESSIONS_FILE \$\{CTEST_SOURCE_DIRECTORY\}/${7:tests/valgrind.supp})
+
+if(NOT EXISTS "\$\{CTEST_SOURCE_DIRECTORY\}")
+    set(CTEST_CHECKOUT_COMMAND "\$\{CTEST_GIT_COMMAND\} clone git@github.com:${8:robturtle/${9:RepoName}.git} \$\{CTEST_SOURCE_DIRECTORY\}")
+endif()
+
+set(CTEST_UPDATE_COMMAND "\$\{CTEST_GIT_COMMAND\}")
+
+set(CTEST_CONFIGURE_COMMAND "\$\{CMAKE_COMMAND\} -DCMAKE_BUILD_TYPE:STRING=\$\{CTEST_BUILD_CONFIGURATION\}")
+#set(CTEST_CONFIGURE_COMMAND "\$\{CTEST_CONFIGURE_COMMAND\} -DWITH_TESTING:BOOL=ON \$\{CTEST_BUILD_OPTIONS\}")
+set(CTEST_CONFIGURE_COMMAND "\$\{CTEST_CONFIGURE_COMMAND\} \$\{CTEST_BUILD_OPTIONS\}")
+set(CTEST_CONFIGURE_COMMAND "\$\{CTEST_CONFIGURE_COMMAND\} \\"-G\$\{CTEST_CMAKE_GENERATOR\}\\"")
+set(CTEST_CONFIGURE_COMMAND "\$\{CTEST_CONFIGURE_COMMAND\} \\"\$\{CTEST_SOURCE_DIRECTORY\}\\"")
+
+ctest_start("${10:Nightly}")
+ctest_update()
+ctest_configure()
+ctest_build()
+ctest_test()
+if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
+    MESSAGE ("doing coverage check...")
+    ctest_coverage()
+endif (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
+if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
+    MESSAGE ("doing memory check...")
+    ctest_memcheck()
+endif (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
+ctest_submit()
+endsnippet
