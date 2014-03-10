@@ -2,7 +2,7 @@ snippet define "#ifdef ..date #define ..date #endif" !b
 #ifndef ${1/(\w+)/$1/}
 #define ${1:SYMBOL}`!v strftime("_%Y_%m_%d_%H_%M")` ${2:value}
 
-
+${3}
 
 #endif
 endsnippet
