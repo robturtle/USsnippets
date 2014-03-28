@@ -1,8 +1,8 @@
 snippet head "CMake Head" !b
-CMAKE_MINIMUM_REQUIRED (VERSION ${4:2.8})
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
 ENABLE_TESTING()
 PROJECT (${1:project})
-${3:ADD_DEFINITIONS (-std=${2:c++11})}
+SET (CMAKE_CXX_FLAGS "-std=c++11")
 $0
 endsnippet
 
