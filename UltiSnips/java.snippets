@@ -1,0 +1,8 @@
+snippet head "Head of class" !b
+package `!p snip.rv = ".".join(vim.eval("expand('%:p:h')").split("src/")[-1].rstrip("/").split("/"))`;
+
+public class `!v expand("%<")`$1
+{
+    $0
+}
+endsnippet
