@@ -1,16 +1,34 @@
+# Auto insert the class's package and main defination
 snippet head "Head of class" !b
-package `!p snip.rv = ".".join(vim.eval("expand('%:p:h')").split("src/")[-1].rstrip("/").split("/"))`;
-
+`!p 
+package_path = vim.eval("expand('%:p:h')").split("src/")
+if len(package_path) is 1:
+    snip.rv = ""
+else:
+    snip.rv = "package " + ".".join(package_path[-1].rstrip("/").split("/")) + "\n"
+`
 public class `!v expand("%<")`$1
 {
     $0
 }
 endsnippet
 
+# Common print expressions
 snippet print "System.out.print(...)" !b
 System.out.print($1);$0
 endsnippet
 
 snippet println "System.out.println(...)" !b
 System.out.println($1);$0
+endsnippet
+
+# JUnit
+snippet junit "import org.junit.???" !b
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 endsnippet
