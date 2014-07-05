@@ -1,13 +1,17 @@
 # Auto insert the class's package and main defination
 snippet head "Head of class" !b
 `!p 
-package_path = vim.eval("expand('%:p:h')").split("src/")
-if len(package_path) is 1:
+paths = vim.eval("expand('%:p:h')").split("src/")
+if len(paths) is 1:
     snip.rv = ""
 else:
-    snip.rv = "package " + ".".join(package_path[-1].rstrip("/").split("/")) + "\n"
+    package_path = paths[-1]
+    if package_path.startswith("main/java/"): # Maven convension
+        package_path = "/".join(package_path.split("/")[2:])
+
+    snip.rv = "package " + ".".join(package_path.rstrip("/").split("/")) + ";\n"
 `
-public class `!v expand("%<")`$1
+public class `!v expand("%:t:r")`$1
 {
     $0
 }
