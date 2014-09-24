@@ -6,7 +6,7 @@ if len(paths) is 1:
     snip.rv = ""
 else:
     package_path = paths[-1]
-    if package_path.startswith("main/java/"): # Maven convension
+    if package_path.startswith("main/java/") or package_path.startswith("test/java/"): # Maven convension
         package_path = "/".join(package_path.split("/")[2:])
 
     snip.rv = "package " + ".".join(package_path.rstrip("/").split("/")) + ";\n"
@@ -21,7 +21,6 @@ endsnippet
 snippet junit "import org.junit.???" !b
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
