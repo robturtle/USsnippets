@@ -11,20 +11,15 @@ else:
 
     snip.rv = "package " + ".".join(package_path.rstrip("/").split("/")) + ";\n"
 `
-public class `!v expand("%:t:r")`$1
-{
+public class `!v expand("%:t:r")`$1 {
     $0
 }
 endsnippet
 
 # JUnit
 snippet junit "import org.junit.???" !b
-
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 endsnippet
 
 ###########################################################################
